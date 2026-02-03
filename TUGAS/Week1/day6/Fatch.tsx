@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,36 +7,60 @@ import {
   Image,
   Modal,
   TouchableOpacity,
-} from 'react-native'
-import { products as initialProducts } from './Data'
-import InputComponent from './Input'
+  useWindowDimensions,
+} from 'react-native';
+import { products as initialProducts } from './Data';
+import InputComponent from './Input';
+import { useWishlist } from '../../../component/week3/day6/hooks/useWishList';
 
 interface Product {
-  id: number
-  title: string
-  price: number
-  image: string
-  description: string
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+  description: string;
 }
 
 export default function ListProduk() {
-  const [modal, setModal] = useState(false)
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
+  const numColumns = isLandscape ? 3 : 2;
 
-  const [product, setProduct] = useState<Product[]>(initialProducts)
+  const spacing = 16;
+  const cardWidth =
+    (width - spacing * (numColumns + 1)) / numColumns;
+
+  const [modal, setModal] = useState(false);
+  const [product, setProduct] = useState<Product[]>(initialProducts);
+
+  
+  const { toggleWishlist, isWishlisted } = useWishlist();
 
   const handleSubmit = (newProduct: Product) => {
-    setProduct(prev => [newProduct, ...prev])
-    setModal(false)
-  }
+    setProduct(prev => [newProduct, ...prev]);
+    setModal(false);
+  };
 
   return (
     <View style={styles.container}>
       <FlatList
         data={product}
+        key={numColumns}
+        numColumns={numColumns}
         keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <View style={[styles.card, { width: cardWidth }]}>
+        
+            <TouchableOpacity
+              style={styles.wishlistButton}
+              onPress={() => toggleWishlist(item.id)}
+            >
+              <Text style={styles.wishlistIcon}>
+                {isWishlisted(item.id) ? '❤️' : '🤍'}
+              </Text>
+            </TouchableOpacity>
+
             <Image
               source={{ uri: item.image }}
               style={styles.image}
@@ -44,7 +68,9 @@ export default function ListProduk() {
             />
 
             <View style={styles.info}>
-              <Text style={styles.name}>{item.title}</Text>
+              <Text style={styles.name} numberOfLines={2}>
+                {item.title}
+              </Text>
               <Text style={styles.price}>Rp {item.price}</Text>
               <Text style={styles.description} numberOfLines={3}>
                 {item.description}
@@ -76,7 +102,7 @@ export default function ListProduk() {
         </View>
       </Modal>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -84,60 +110,86 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#8fa1eeff',
   },
+
   list: {
-    padding: 16,
+    padding: 8,
   },
+
   card: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    marginBottom: 16,
+    margin: 8,
     elevation: 4,
-    alignItems: 'center',
+    overflow: 'hidden',
   },
+
+  wishlistButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    zIndex: 10,
+  },
+
+  wishlistIcon: {
+    fontSize: 22,
+  },
+
   image: {
-    width: 200,
-    height: 200,
+    width: '100%',
+    height: 160,
+    backgroundColor: '#f2f2f2',
   },
+
   info: {
-    padding: 12,
+    padding: 10,
   },
+
   name: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  price: {
     fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+
+  price: {
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#1e90ff',
+    marginBottom: 4,
   },
+
   description: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#666',
   },
+
   addButton: {
     backgroundColor: '#007AFF',
-    margin: 20,
+    margin: 16,
     paddingVertical: 14,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: 'center',
   },
+
   addButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
   },
+
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   modalContent: {
     width: '90%',
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 20,
   },
+
   closeButton: {
     marginTop: 15,
     backgroundColor: '#e53935',
@@ -145,8 +197,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
   },
+
   closeText: {
     color: '#fff',
     fontWeight: '600',
   },
-})
+});

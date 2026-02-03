@@ -61,6 +61,7 @@ export default function InputComponent({ onSubmit }: InputProps) {
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       <TextInput
+       placeholderTextColor='#99bcc9'
         placeholder="Nama produk"
         style={styles.input}
         value={name}
@@ -68,6 +69,7 @@ export default function InputComponent({ onSubmit }: InputProps) {
       />
 
       <TextInput
+       placeholderTextColor='#99bcc9'
         placeholder="URL gambar"
         style={styles.input}
         value={image}
@@ -75,6 +77,7 @@ export default function InputComponent({ onSubmit }: InputProps) {
       />
 
       <TextInput
+       placeholderTextColor='#99bcc9'
         placeholder="Harga"
         style={styles.input}
         keyboardType="numeric"
@@ -83,6 +86,7 @@ export default function InputComponent({ onSubmit }: InputProps) {
       />
 
       <TextInput
+       placeholderTextColor='#99bcc9'
         placeholder="Deskripsi"
         style={styles.input}
         value={desc}
@@ -112,6 +116,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     borderRadius: 6,
     backgroundColor: "#fff",
+    color:'black'
   },
   error: {
     color: "red",
